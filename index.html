@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>مسابقه بزرگ ساسان کوئیز (SASAN QUIZ)</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3b82f6">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- SETUP -->
+  <div class="screen active" id="screen-setup">
+    <h1 class="title-main">مسابقه بزرگ ساسان کوئیز (SASAN QUIZ)</h1>
+    <p class="subtitle"> بازی گروهی سوالات چهارگزینه‌ای، تک‌جوابی و ۵ ثانیه‌ای</p>
+
+    <div class="card">
+      <label>تعداد شرکت‌کنندگان</label>
+      <div class="stepper">
+        <button onclick="changeCount(-1)">−</button>
+        <div class="num" id="countNum">1</div>
+        <button onclick="changeCount(1)">+</button>
+      </div>
+      <button class="btn primary" onclick="goToNames()">مرحله بعد</button>
+    </div>
+  </div>
+
+  <!-- NAMES -->
+  <div class="screen" id="screen-names">
+    <div class="topbar">
+      <span class="back" onclick="showScreen('screen-setup')">‹ بازگشت</span>
+      <span class="pill">مشخصات شرکت‌کنندگان</span>
+    </div>
+    <div class="card" id="namesCard"></div>
+    <button class="btn primary" onclick="goToMenu()">شروع بازی</button>
+  </div>
+
+  <!-- MAIN MENU -->
+  <div class="screen" id="screen-menu">
+    <div class="topbar">
+      <span class="back" onclick="showScreen('screen-names')">‹ ویرایش شرکت‌کنندگان</span>
+      <span class="pill" id="playersPill"></span>
+    </div>
+    <h2 style="color:var(--gold-light); font-size:17px; margin-bottom:12px;">یک حالت بازی انتخاب کن</h2>
+
+    <div class="card mode-card" onclick="openMode1Diff()">
+      <div class="mode-icon">🎯</div>
+      <div class="mode-info">
+        <h3>سوالات چهارگزینه‌ای</h3>
+        <p>سه سطح سختی · گردش تصادفی بین بازیکن‌ها · ۲۵ سوال برای هرکس · ۳۰ ثانیه زمان · امتیاز طلایی در تساوی</p>
+      </div>
+    </div>
+
+    <div class="card mode-card" onclick="startMode2()">
+      <div class="mode-icon">✍️</div>
+      <div class="mode-info">
+        <h3>سوالات تک‌جوابی</h3>
+        <p>بدون گزینه، پاسخ را خودتان بگویید · ۱۰ ثانیه زمان · یک بار امکان استفاده از کمک «دو گزینه‌ای» برای هر نفر</p>
+      </div>
+    </div>
+
+    <div class="card mode-card" onclick="startMode3()">
+      <div class="mode-icon">⚡</div>
+      <div class="mode-info">
+        <h3>سوالات ۵ ثانیه‌ای</h3>
+        <p>مثلاً «سه شهر اروپایی» یا «سه فوتبالیست» · باید ۳ جواب در ۵ ثانیه بدهید</p>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;">
+      <span class="pill" style="cursor:pointer;" onclick="showScreen('screen-scoreboard')">🏆 مشاهده امتیازها</span>
+    </div>
+  </div>
+
+  <!-- MODE 1: DIFFICULTY SELECT -->
+  <div class="screen" id="screen-m1-diff">
+    <div class="topbar">
+      <span class="back" onclick="showScreen('screen-menu')">‹ بازگشت</span>
+      <span class="pill">چهارگزینه‌ای</span>
+    </div>
+    <h2 style="color:var(--gold-light); font-size:16px; margin-bottom:14px;">درجه سختی را انتخاب کن</h2>
+    <div class="card diff-card" onclick="startMode1('medium')">
+      <h3>🟢 متوسط</h3>
+      <p>۱۰ امتیاز به ازای هر پاسخ صحیح</p>
+    </div>
+    <div class="card diff-card" onclick="startMode1('hard')">
+      <h3>🟠 سخت</h3>
+      <p>۲۰ امتیاز به ازای هر پاسخ صحیح</p>
+    </div>
+    <div class="card diff-card" onclick="startMode1('veryhard')">
+      <h3>🔴 خیلی سخت</h3>
+      <p>۳۰ امتیاز به ازای هر پاسخ صحیح</p>
+    </div>
+  </div>
+
+  <!-- MODE 1: GAME -->
+  <div class="screen" id="screen-m1-game">
+    <div class="topbar">
+      <span class="back" onclick="confirmBackToMenu()">‹ بازگشت به منو</span>
+      <span class="pill" id="m1DiffPill"></span>
+    </div>
+    <div class="topbar" style="margin-top:-8px;">
+      <span class="pill" id="m1ProgressPill"></span>
+    </div>
+    <div class="player-banner">
+      <div class="name" id="m1PlayerName"></div>
+      <div class="sub" id="m1PlayerScore"></div>
+    </div>
+    <div class="timer-num" id="m1Timer">20</div>
+    <div class="timer-wrap"><div class="timer-bar" id="m1TimerBar"></div></div>
+    <div class="card">
+      <div class="q-image hidden" id="m1QImage"></div>
+      <div class="q-cat" id="m1Cat"></div>
+      <div class="q-text" id="m1Q"></div>
+      <div id="m1Opts"></div>
+      <div class="answer-reveal hidden" id="m1AnswerReveal"></div>
+    </div>
+  </div>
+
+  <!-- MODE 1: GOLDEN QUESTION -->
+  <div class="screen" id="screen-m1-golden">
+    <div class="topbar"><span class="pill">⚜️ امتیاز طلایی — تساوی</span></div>
+    <p class="center-note" id="goldenPlayers"></p>
+    <div class="card">
+      <div class="q-cat" id="goldCat"></div>
+      <div class="q-text" id="goldQ"></div>
+      <p class="center-note">این سوال گزینه ندارد. پاسخ صحیح را با صدای بلند بگویید و اولین نفری که میزبان تشخیص می‌دهد درست گفته، دکمه نامش را بزنید.</p>
+      <div id="goldBtns" style="margin-top:14px;"></div>
+      <button class="btn danger" onclick="revealGolden()">نمایش پاسخ صحیح</button>
+      <p class="center-note hidden" id="goldAnswerBox"></p>
+    </div>
+  </div>
+
+  <!-- MODE 2: GAME -->
+  <div class="screen" id="screen-m2-game">
+    <div class="topbar">
+      <span class="back" onclick="confirmBackToMenu()">‹ بازگشت به منو</span>
+      <span class="pill" id="m2ProgressPill"></span>
+    </div>
+    <div class="player-banner">
+      <div class="name" id="m2PlayerName"></div>
+      <div class="sub" id="m2PlayerScore"></div>
+    </div>
+    <div class="timer-num" id="m2Timer">10</div>
+    <div class="timer-wrap"><div class="timer-bar" id="m2TimerBar"></div></div>
+    <div class="card">
+      <div class="q-cat" id="m2Cat"></div>
+      <div class="q-text" id="m2Q"></div>
+      <input type="text" id="m2Input" placeholder="پاسخ را اینجا بنویس یا فقط شفاهی بگو...">
+      <button class="btn" id="m2LifelineBtn" onclick="useLifeline()">🆘 استفاده از کمک دو گزینه‌ای</button>
+      <div id="m2LifelineBox"></div>
+      <button class="btn danger" onclick="revealM2Answer()">👁 نمایش پاسخ صحیح</button>
+      <div class="answer-reveal hidden" id="m2AnswerReveal"></div>
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="btn success" onclick="judgeM2(true)">✔ پاسخ درست بود</button>
+        <button class="btn danger" onclick="judgeM2(false)">✘ پاسخ غلط بود</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODE 3: GAME -->
+  <div class="screen" id="screen-m3-game">
+    <div class="topbar">
+      <span class="back" onclick="confirmBackToMenu()">‹ بازگشت به منو</span>
+      <span class="pill" id="m3ProgressPill"></span>
+    </div>
+    <div class="player-banner">
+      <div class="name" id="m3PlayerName"></div>
+      <div class="sub" id="m3PlayerScore"></div>
+    </div>
+    <div class="timer-num" id="m3Timer">5</div>
+    <div class="timer-wrap"><div class="timer-bar" id="m3TimerBar"></div></div>
+    <div class="card">
+      <div class="q-cat" id="m3Cat"></div>
+      <div class="q-text" id="m3Q"></div>
+      <input type="text" class="name-input" id="m3In1" placeholder="جواب اول">
+      <input type="text" class="name-input" id="m3In2" placeholder="جواب دوم">
+      <input type="text" class="name-input" id="m3In3" placeholder="جواب سوم">
+      <button class="btn primary" id="m3SubmitBtn" onclick="submitM3()">پایان زمان / ثبت جواب‌ها</button>
+    </div>
+    <div class="card hidden" id="m3JudgeCard">
+      <p class="center-note" style="margin-bottom:10px;">هر جواب درست ۵ امتیاز دارد — میزبان تشخیص دهد:</p>
+      <div id="m3JudgeList"></div>
+      <button class="btn primary" onclick="finishM3Judge()">تایید و ادامه</button>
+    </div>
+  </div>
+
+  <!-- SCOREBOARD / RESULTS -->
+  <div class="screen" id="screen-scoreboard">
+    <div class="topbar">
+      <span class="back" onclick="showScreen('screen-menu')">‹ منوی اصلی</span>
+      <span class="pill">🏆 جدول امتیازها</span>
+    </div>
+    <div class="card">
+      <div class="score-list" id="scoreList"></div>
+    </div>
+  </div>
+
+  <!-- WINNER -->
+  <div class="screen" id="screen-winner">
+    <div class="card winner-box">
+      <div class="crown">🏆</div>
+      <h2 id="winnerName"></h2>
+      <p id="winnerScore"></p>
+    </div>
+    <button class="btn primary" onclick="showScreen('screen-scoreboard')">مشاهده جدول کامل</button>
+    <button class="btn" onclick="showScreen('screen-menu')">بازگشت به منو</button>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

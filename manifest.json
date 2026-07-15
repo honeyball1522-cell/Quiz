@@ -1,0 +1,16 @@
+{
+  "name": "مسابقه بزرگ ساسان کوئیز (SASAN QUIZ)",
+  "short_name": "ساسان کوئیز",
+  "description": "بازی گروهی سوالات چهارگزینه‌ای، تک‌جوابی و ۵ ثانیه‌ای",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d1420",
+  "theme_color": "#3b82f6",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
